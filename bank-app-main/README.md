@@ -1,87 +1,97 @@
-# TP 8 — Architecture Microservices avec Spring Cloud (Bank Application)
+# TP 8 — Microservices Architecture avec Spring Cloud (Bank App)
 
-Ce projet correspond au **TP 8 consacré à l’architecture microservices**.  
-Il met en œuvre une **application bancaire distribuée** basée sur **Spring Boot** et **Spring Cloud**, illustrant les principes fondamentaux des systèmes microservices modernes.
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.8-brightgreen)
+![Spring Cloud](https://img.shields.io/badge/Spring%20Cloud-2025.0.0-blue)
+![Java](https://img.shields.io/badge/Java-17-orange)
+![Build](https://img.shields.io/badge/Build-Maven-blue)
+![Status](https://img.shields.io/badge/Status-Working-success)
+![Architecture](https://img.shields.io/badge/Architecture-Microservices-success)
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
 
-L’application intègre :
-- La découverte automatique des services
-- La configuration centralisée
-- Une passerelle API unique
-- Des microservices métier indépendants
-- La communication inter-services
-- La gestion de la tolérance aux pannes
+Projet du **TP 8 – Architecture Microservices avec Spring Cloud**.  
+Cette application simule un **système bancaire distribué** basé sur **Spring Boot & Spring Cloud**, intégrant :
+
+- **Service Discovery (Eureka)**
+- **Configuration centralisée (Config Server + Git)**
+- **API Gateway**
+- **Microservices métier (Customer & Account)**
+- **Communication inter-services (OpenFeign)**
+- **Tolérance aux pannes (Resilience4J – Circuit Breaker)**
 
 ---
 
 ## 📌 Sommaire
-1. Fonctionnalités principales  
-2. Environnement technique  
-3. Organisation de l’architecture  
-4. Microservices implémentés  
-5. Ports et points d’accès  
-6. Lancement du projet  
-7. Scénarios de test  
-8. Auteur  
-9. Licence  
+
+1. [Fonctionnalités](#-fonctionnalités)
+2. [Stack technique](#-stack-technique)
+3. [Architecture globale](#-architecture-globale)
+4. [Microservices](#-microservices)
+5. [Ports & URLs](#-ports--urls)
+6. [Démarrage rapide](#-démarrage-rapide)
+7. [Tests & démonstrations](#-tests--démonstrations)
+8. [Screenshots officiels](#-screenshots-officiels)
+9. [Auteurs](#-auteurs)
+10. [Licence](#-licence)
 
 ---
 
-## ✅ Fonctionnalités principales
+## ✅ Fonctionnalités
 
 ### 🧩 Architecture Microservices
-- Enregistrement et découverte des services via **Eureka**
-- Routage centralisé des requêtes via **Spring Cloud Gateway**
-- Externalisation de la configuration avec **Spring Cloud Config**
-- Rafraîchissement dynamique de la configuration (`/actuator/refresh`)
+- Découverte automatique des services via **Eureka**
+- Routage dynamique via **Spring Cloud Gateway**
+- Configuration externalisée via **Spring Cloud Config**
+- Chargement dynamique des configs (`/actuator/refresh`)
 
 ### 🏦 Services métier
 - **Customer Service**
-  - Gestion des données clients
-  - Base de données H2 en mémoire
+    - Gestion des clients
+    - Base H2 en mémoire
 - **Account Service**
-  - Gestion des comptes bancaires
-  - Communication REST avec Customer Service
-  - Circuit Breaker avec mécanisme de repli
+    - Gestion des comptes bancaires
+    - Appel distant vers Customer Service
+    - Circuit Breaker avec **fallback**
 
-### 🛡️ Tolérance aux pannes
-- Mise en œuvre de **Resilience4J**
-- Activation automatique d’un fallback en cas d’indisponibilité
-- Message retourné : `Source not available`
+### 🛡️ Résilience
+- **Resilience4J Circuit Breaker**
+- Fallback automatique si un service est indisponible
+- Message : `Source not available`
 
 ---
 
-## 🛠️ Environnement technique
+## 🛠️ Stack technique
 
 | Technologie | Version |
-|------------|--------|
+|------------|---------|
 | Java | 17 |
 | Spring Boot | 3.5.8 |
 | Spring Cloud | 2025.0.0 |
-| Maven | ✔ |
-| Eureka Server | ✔ |
-| Spring Cloud Config | ✔ |
-| Spring Cloud Gateway | ✔ |
-| OpenFeign | ✔ |
-| Resilience4J | ✔ |
-| Spring Data JPA | ✔ |
-| H2 Database | ✔ |
+| Maven | ✅ |
+| Eureka Server | ✅ |
+| Spring Cloud Config | ✅ |
+| Spring Cloud Gateway | ✅ |
+| OpenFeign | ✅ |
+| Resilience4J | ✅ |
+| Spring Data JPA | ✅ |
+| H2 Database | ✅ |
 
 ---
 
-## 🏗️ Organisation de l’architecture
-
+## 🏗️ Architecture globale
+```
 bank-app/
-├── discovery-service/ # Serveur Eureka
-├── config-service/ # Configuration centralisée
+├── discovery-service/ # Eureka Server
+├── config-service/ # Spring Cloud Config Server
 ├── gateway-service/ # API Gateway
 ├── customer-service/ # Microservice Client
 ├── account-service/ # Microservice Compte
 └── README.md
+```
 
-shell
-Copy code
 
-### Logique de communication
+### Architecture logique
+
+```
 Client
 │
 ▼
@@ -91,107 +101,133 @@ API Gateway (9999)
 └── ACCOUNT-SERVICE (8083)
 │
 └── OpenFeign → CUSTOMER-SERVICE
+```
 
-yaml
-Copy code
 
 ---
 
-## 🧩 Microservices implémentés
+## 🧩 Microservices
 
-| Service | Description |
-|-------|------------|
-| discovery-service | Registre des services |
-| config-service | Configuration centralisée via Git |
+| Service | Rôle |
+|-------|------|
+| discovery-service | Service Registry (Eureka) |
+| config-service | Configuration centralisée (Git) |
 | gateway-service | Point d’entrée unique |
 | customer-service | Gestion des clients |
 | account-service | Gestion des comptes + Feign + Circuit Breaker |
 
 ---
 
-## 🌐 Ports et points d’accès
+## 🌐 Ports & URLs
 
 | Service | Port | URL |
 |------|------|-----|
 | Eureka Server | 8761 | http://localhost:8761 |
 | Config Server | 8888 | http://localhost:8888 |
-| API Gateway | 9999 | http://localhost:9999 |
+| Gateway | 9999 | http://localhost:9999 |
 | Customer Service | 8084 | http://localhost:8084 |
 | Account Service | 8083 | http://localhost:8083 |
 
 ---
 
-## 🚀 Lancement du projet
+## 🚀 Démarrage rapide
 
-### Prérequis
-- Java 17  
-- Maven  
-- Git  
-- IntelliJ IDEA ou VS Code  
+### 1️⃣ Prérequis
 
-### Ordre de démarrage recommandé
-1. discovery-service  
-2. config-service  
-3. gateway-service  
-4. customer-service  
-5. account-service  
+✅ Java **17**  
+✅ Maven  
+✅ IntelliJ IDEA / VS Code  
+✅ Git
+
+
+
+### 2️⃣ Ordre de démarrage (IMPORTANT)
+
+Démarrer **dans cet ordre exact** :
+
+1. `discovery-service`
+2. `config-service`
+3. `gateway-service`
+4. `customer-service`
+5. `account-service`
 
 ---
 
-## 🔎 Scénarios de test
+## 🔗 Tests & démonstrations
 
-### Accès direct aux services
-- Clients :  
-  http://localhost:8084/customers  
-- Comptes :  
-  http://localhost:8083/api/accounts  
+### Tests directs
 
-### Accès via la Gateway
-- Clients :  
-  http://localhost:9999/CUSTOMER-SERVICE/customers  
-- Comptes :  
-  http://localhost:9999/ACCOUNT-SERVICE/api/accounts  
+- Customers  
+  👉 http://localhost:8084/customers
 
-### Test du Circuit Breaker
-1. Arrêter `customer-service`
+- Accounts  
+  👉 http://localhost:8083/api/accounts
+
+
+
+### Tests via Gateway (MAJUSCULE OBLIGATOIRE)
+
+- Customers  
+  👉 http://localhost:9999/CUSTOMER-SERVICE/customers
+
+- Accounts  
+  👉 http://localhost:9999/ACCOUNT-SERVICE/api/accounts
+
+---
+
+### Test Circuit Breaker (Resilience4J)
+
+1. **Arrêter `customer-service`**
 2. Appeler :
-http://localhost:9999/ACCOUNT-SERVICE/api/accounts/{id}
+  👉 http://localhost:9999/ACCOUNT-SERVICE/api/accounts/{id}
 
-css
-Copy code
-3. Résultat attendu :
-```json
+
+➡️ Résultat :
+```
 {
   "firstName": "Source not available",
-  "lastName": "Source not available"
+  "lastName": "Source Not available"
 }
-Rafraîchissement de la configuration
-Modifier customer-service.properties
+```
 
-Exécuter :
+### Test Refresh Config (Spring Cloud Config)
 
-bash
-Copy code
+1. Modifier customer-service.properties dans msa-bank-config
+2. Exécuter :
+
 POST http://localhost:8084/actuator/refresh
-Vérifier :
 
-bash
-Copy code
+3. Vérifier :
+
 GET http://localhost:8084/configTest
-👤 Auteur
-Mohammed Taha Mallouk
-Étudiant Ingénieur — MIAGE
-Projet académique : Architecture Microservices avec Spring Boot & Spring Cloud
-
-📄 Licence
-Projet sous licence MIT.
-Utilisation, modification et diffusion autorisées à des fins pédagogiques.
-
-© 2025 — Mohammed Taha Mallouk
-
-yaml
-Copy code
 
 ---
 
-Si tu veux une **version encore plus simple**, ou une **version spéciale rapport / soutenance**, je peu
+
+## 📸 Screenshots officiels
+
+| Eureka Dashboard               | Customers   | Accounts           | Customers via Gateway               | Accounts via Gateway               | Circuit Breaker (Customer DOWN) |Actuator Refresh (Postman)           | Config Test après refresh |
+|--------------------------------|------------------|-------------------|-------------------------------------|------------------------------------|---------------------------------|--------------------|---------------------------|
+| ![](docs/Eureka_Dashboard.png) | ![](docs/Customers.png) | ![](docs/Accounts.png) | ![](docs/Customers_via_Gateway.png) | ![](docs/Accounts_via_Gateway.png) | ![](docs/Circuit_Breaker.png)   | ![](docs/Postman.png) | ![](docs/Config_Test.png) | 
+
+---
+
+
+## 👥 Auteurs
+
+Mallouk Mohammed Taha<br/>
+Étudiants Ingénieurs — MIAGE<br/>
+Implémentation complète de l’architecture micro-services<br/>
+Spring Boot · Spring Cloud · Eureka · Gateway · Config · Feign · Resilience4J <br/>
+
+---
+
+## 📄 Licence
+
+✅ Projet sous licence MIT.<br/>
+Libre d’utilisation, modification et distribution à des fins pédagogiques.<br/>
+
+© 2025 — Mallouk Mohammed Taha<br/>
+
+---
+
