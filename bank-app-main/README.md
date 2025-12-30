@@ -204,13 +204,7 @@ GET http://localhost:8084/configTest
 ---
 
 
-## 📸 Screenshots officiels
 
-| Eureka Dashboard               | Customers   | Accounts           | Customers via Gateway               | Accounts via Gateway               | Circuit Breaker (Customer DOWN) |Actuator Refresh (Postman)           | Config Test après refresh |
-|--------------------------------|------------------|-------------------|-------------------------------------|------------------------------------|---------------------------------|--------------------|---------------------------|
-| ![](docs/Eureka_Dashboard.png) | ![](docs/Customers.png) | ![](docs/Accounts.png) | ![](docs/Customers_via_Gateway.png) | ![](docs/Accounts_via_Gateway.png) | ![](docs/Circuit_Breaker.png)   | ![](docs/Postman.png) | ![](docs/Config_Test.png) | 
-
----
 
 
 ## 👥 Auteurs
